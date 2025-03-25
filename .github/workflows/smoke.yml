@@ -1,0 +1,155 @@
+name: Smoke Tests Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: smoke-tests-pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # This step runs the smoke tests on the dev environment
+  run-smoke-tests-on-dev:
+    concurrency:
+      group: smoke-tests
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Cache Playwright Dependencies
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.5.24"
+
+      - name: Sync Dependencies
+        timeout-minutes: 60
+        run: |
+          just sync
+          just setup
+
+      - name: Run Smoke Tests on dev
+        run: just test-ci-dev
+
+      - name: Upload Test Failure Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces-dev
+          path: test-results/dev/
+          retention-days: 7
+
+      - name: Notify Failure
+        if: failure()
+        id: pr-status-badge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message_1 = `For more details, download the artifact, extract the content, and upload the file trace.zip to https://trace.playwright.dev/, this allows for online debugging.`;
+            const message_2 = `However, it is also possible to check locally in the project directory using the next command: just show-trace {{path-of-trace.zip}}`;
+            core.summary.addHeading("❌ Some tests failed ❌")
+                        .addRaw(message_1)
+                        .addRaw(message_2)
+                        .write();
+
+
+  # This step performs the same actions as the previous one but on the production environment
+  run-smoke-tests-on-production:
+    concurrency:
+      group: smoke-tests
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Cache Playwright Dependencies
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.5.24"
+
+      - name: Sync Dependencies
+        timeout-minutes: 60
+        run: |
+          just sync
+          just setup
+
+      - name: Run Smoke Tests on Production
+        run: just test-ci-prod
+
+      - name: Upload Test Failure Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces-prod
+          path: test-results/prod/
+          retention-days: 7
+
+      - name: Notify Failure
+        if: failure()
+        id: pr-status-badge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message_1 = `For more details, download the artifact, extract the content, and upload the file trace.zip to https://trace.playwright.dev/, this allows for online debugging.`;
+            const message_2 = `However, it is also possible to check locally in the project directory using the next command: just show-trace {{path-of-trace.zip}}`;
+            core.summary.addHeading("❌ Some tests failed ❌")
+                        .addRaw(message_1)
+                        .addRaw(message_2)
+                        .write();
+
+
+  # # In case of failure, this step will send a badge on the Actions to help with debugging
+  # notify-failure:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Notify Failure
+  #       if: failure()
+  #       id: pr-status-badge
+  #       uses: actions/github-script@v7
+  #       with:
+  #         script: |
+  #           const message_1 = `For more details, download the artifact, extract the content, and upload the file trace.zip to https://trace.playwright.dev/, this allows for online debugging.`;
+  #           const message_2 = `However, it is also possible to check locally in the project directory using the next command:`;
+  #           const code = `just show-trace {{path-of-trace.zip}}`;
+  #           core.summary.addHeading("❌ Some tests failed ❌")
+  #                       .addRaw(message_1)
+  #                       .addRaw(message_2)
+  #                       .addCode(code)
+  #                       .write();
