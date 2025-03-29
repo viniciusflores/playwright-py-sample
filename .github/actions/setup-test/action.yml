@@ -27,7 +27,4 @@ runs:
       with:
         version: "0.5.24"
 
-    - name: Sync Dependencies
-      run: |
-        just sync
-        just setup
+
