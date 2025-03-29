@@ -5,7 +5,7 @@ import time
 
 def test_with_xdist_01():
     time.sleep(1)
-    assert True
+    assert False
 
 
 def test_with_xdist_02():
