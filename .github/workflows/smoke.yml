@@ -6,9 +6,9 @@ on:
     #   - main
     #   - develop
 
-concurrency:
-  group: smoke-tests-pipeline-${{ github.ref }}
-  cancel-in-progress: false
+# concurrency:
+#   group: smoke-tests-pipeline-${{ github.ref }}
+#   cancel-in-progress: false
 
 jobs:
   # This step runs the smoke tests on the dev environment
@@ -59,9 +59,9 @@ jobs:
           path: test-results/dev/
           retention-days: 7
 
-      - name: Notify Failure
-        uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@develop
-        if: failure()
+      # - name: Notify Failure
+      #   uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@develop
+      #   if: failure()
 
 
   # This step performs the same actions as the previous one but on the production environment
@@ -112,21 +112,7 @@ jobs:
           path: test-results/prod/
           retention-days: 7
 
-      - name: Notify Failure
-        uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@develop
-        if: failure()
-
       # - name: Notify Failure
+      #   uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@develop
       #   if: failure()
-      #   id: pr-status-badge
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       const message_1 = `For more details, download the artifact, extract the content, and upload the file trace.zip to https://trace.playwright.dev/, this allows for online debugging.`;
-      #       const message_2 = `However, it is also possible to check locally in the project directory using the next command: just show-trace {{path-of-trace.zip}}`;
-      #       core.summary.addHeading("❌ Some tests failed ❌")
-      #                   .addRaw(message_1)
-      #                   .addRaw(message_2)
-      #                   .write();
-
 
