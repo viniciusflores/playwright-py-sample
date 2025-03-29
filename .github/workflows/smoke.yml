@@ -2,9 +2,9 @@ name: Smoke Tests Pipeline
 
 on:
   push:
-    branches:
-      # - main
-      - develop
+    # branches:
+    #   - main
+    #   - develop
 
 concurrency:
   group: smoke-tests-pipeline-${{ github.ref }}
