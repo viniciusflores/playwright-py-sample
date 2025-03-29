@@ -61,7 +61,7 @@ jobs:
 
       - name: Notify Failure
         if: failure()
-        uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@main
+        uses: ./.github/workflows/pr-status-badge.yml
 
 
   # # This step performs the same actions as the previous one but on the production environment
