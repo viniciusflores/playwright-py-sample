@@ -2,20 +2,19 @@ name: Smoke Tests Pipeline
 
 on:
   push:
-    # branches:
-    #   - main
-    #   - develop
+    branches:
+      - main
+      - develop
 
 permissions:
   pull-requests: write
 
-# concurrency:
-#   group: smoke-tests-pipeline-${{ github.ref }}
-#   cancel-in-progress: false
+concurrency:
+  group: smoke-tests-pipeline-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  # This step runs the smoke tests on the dev environment
-  run-smoke-tests-on-dev:
+  run-smoke-tests:
     concurrency:
       group: smoke-tests
       cancel-in-progress: false
@@ -28,98 +27,26 @@ jobs:
         with:
           fetch-depth: "0"
 
-      # - name: Cache Playwright Dependencies
-      #   uses: actions/cache@v3
-      #   id: playwright-cache
-      #   with:
-      #     path: ~/.cache/ms-playwright
-      #     key: ${{ runner.os }}-playwright-${{ hashFiles('**/pyproject.toml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-playwright-
-
-      # - name: Install Just
-      #   uses: extractions/setup-just@v2
-
-      # - name: Install UV
-      #   uses: astral-sh/setup-uv@v5
-      #   with:
-      #     version: "0.5.24"
-
       - name: Setup test
         uses: ./.github/actions/setup-test
         timeout-minutes: 60
 
-      # - name: Sync Dependencies
-      #   timeout-minutes: 60
-      #   run: |
-      #     just sync
-      #     just setup
+      - name: Verify Just Installation
+        shell: bash
+        run: just --version
+
+      - name: Verify UV Installation
+        shell: bash
+        run: uv --version
 
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
 
-      # - name: Upload Test Failure Results
-      #   uses: actions/upload-artifact@v4
-      #   if: failure()
-      #   with:
-      #     name: playwright-traces-dev
-      #     path: test-results/dev/
-      #     retention-days: 7
+      - name: Run Smoke Tests on prod
+        run: just test-ci-prod
 
       - name: Notify Failure
         if: failure()
         uses: ./.github/actions/notify-failure
 
-
-  # # This step performs the same actions as the previous one but on the production environment
-  # run-smoke-tests-on-production:
-  #   concurrency:
-  #     group: smoke-tests
-  #     cancel-in-progress: false
-  #   strategy:
-  #     fail-fast: false
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: "0"
-
-  #     - name: Cache Playwright Dependencies
-  #       uses: actions/cache@v3
-  #       id: playwright-cache
-  #       with:
-  #         path: ~/.cache/ms-playwright
-  #         key: ${{ runner.os }}-playwright-${{ hashFiles('**/pyproject.toml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-playwright-
-
-  #     - name: Install Just
-  #       uses: extractions/setup-just@v2
-
-  #     - name: Install UV
-  #       uses: astral-sh/setup-uv@v5
-  #       with:
-  #         version: "0.5.24"
-
-  #     - name: Sync Dependencies
-  #       timeout-minutes: 60
-  #       run: |
-  #         just sync
-  #         just setup
-
-  #     - name: Run Smoke Tests on Production
-  #       run: just test-ci-prod
-
-  #     # - name: Upload Test Failure Results
-  #     #   uses: actions/upload-artifact@v4
-  #     #   if: failure()
-  #     #   with:
-  #     #     name: playwright-traces-prod
-  #     #     path: test-results/prod/
-  #     #     retention-days: 7
-
-  #     - name: Notify Failure
-  #       uses: ./.github/actions/notify-failure
-  #       if: failure()
 
