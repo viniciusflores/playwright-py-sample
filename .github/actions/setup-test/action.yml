@@ -27,6 +27,12 @@ runs:
       with:
         version: "0.5.24"
 
+    - name: Verify Just Installation
+      run: just --version
+
+    - name: Verify UV Installation
+      run: uv --version
+
     - name: Sync Dependencies
       timeout-minutes: 60
       run: |
