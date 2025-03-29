@@ -8,7 +8,7 @@ setup:
   uv run playwright install --with-deps
 
 test:
-  export ENV=${ENV:-dev}; uv run pytest
+  export ENV=${ENV:-dev}; uv run pytest -n auto
 
 test-dev:
   export ENV=dev; uv run pytest
