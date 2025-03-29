@@ -6,6 +6,9 @@ on:
     #   - main
     #   - develop
 
+permissions:
+  pull-requests: write
+
 # concurrency:
 #   group: smoke-tests-pipeline-${{ github.ref }}
 #   cancel-in-progress: false
@@ -61,7 +64,8 @@ jobs:
 
       - name: Notify Failure
         if: failure()
-        uses: ./.github/workflows/pr-status-badge.yml
+        uses: ./.github/actions/notify-failure
+        # uses: ./.github/workflows/pr-status-badge.yml
 
 
   # # This step performs the same actions as the previous one but on the production environment
