@@ -51,17 +51,17 @@ jobs:
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
 
-      - name: Upload Test Failure Results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-traces-dev
-          path: test-results/dev/
-          retention-days: 7
-
-      # - name: Notify Failure
+      # - name: Upload Test Failure Results
+      #   uses: actions/upload-artifact@v4
       #   if: failure()
-      #   uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@main
+      #   with:
+      #     name: playwright-traces-dev
+      #     path: test-results/dev/
+      #     retention-days: 7
+
+      - name: Notify Failure
+        if: failure()
+        uses: viniciusflores/playwright-py-sample/.github/workflows/pr-status-badge.yml@main
 
 
   # # This step performs the same actions as the previous one but on the production environment
