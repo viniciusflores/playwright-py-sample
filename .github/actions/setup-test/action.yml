@@ -28,9 +28,11 @@ runs:
         version: "0.5.24"
 
     - name: Verify Just Installation
+      shell: bash
       run: just --version
 
     - name: Verify UV Installation
+      shell: bash
       run: uv --version
 
     - name: Sync Dependencies
