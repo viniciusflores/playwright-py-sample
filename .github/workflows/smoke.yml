@@ -45,14 +45,14 @@ jobs:
       #   with:
       #     version: "0.5.24"
 
+      - name: Setup test
+        uses: ./.github/actions/setup-test
+
       - name: Sync Dependencies
         timeout-minutes: 60
         run: |
           just sync
           just setup
-
-      - name: Setup test
-        uses: ./.github/actions/setup-test
 
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
