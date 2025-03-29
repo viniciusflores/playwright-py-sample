@@ -60,8 +60,10 @@ jobs:
       #     retention-days: 7
 
       - name: Notify Failure
-        if: failure()
+        id: notify-failure
         uses: ./.github/workflows/pr-status-badge.yml
+        # if: failure()
+        # this is a test
 
 
   # # This step performs the same actions as the previous one but on the production environment
