@@ -16,7 +16,7 @@ inputs:
     default: "However, it is also possible to check locally in the project directory using the next command: just show-trace {{path-of-trace.zip}}"
 
 runs:
-  using: "node16"
+  using: "composite"
   steps:
     - name: Add Failure Notification
       uses: actions/github-script@v7
