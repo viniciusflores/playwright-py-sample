@@ -5,14 +5,16 @@ on:
     branches:
       - main
       - develop
+      - dev2
 
 concurrency:
   group: smoke-tests-pipeline-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # This step runs the smoke tests on the dev environment
-  run-smoke-tests-on-dev:
+  # setup the environment for the smoke tests
+  setup-environment:
+    name: setup-environment
     concurrency:
       group: smoke-tests
       cancel-in-progress: false
@@ -37,6 +39,34 @@ jobs:
         shell: bash
         run: uv --version
 
+
+  # This step runs the smoke tests on the dev environment
+  run-smoke-tests-on-dev:
+    needs:  setup-environment
+    concurrency:
+      group: smoke-tests
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: "0"
+
+      # - name: Setup test
+      #   uses: ./.github/actions/setup-test
+      #   timeout-minutes: 60
+
+      - name: Verify Just Installation
+        shell: bash
+        run: just --version
+
+      - name: Verify UV Installation
+        shell: bash
+        run: uv --version
+
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
 
@@ -47,6 +77,7 @@ jobs:
 
   # # This step performs the same actions as the previous one but on the production environment
   run-smoke-tests-on-production:
+    needs:  setup-environment
     concurrency:
       group: smoke-tests
       cancel-in-progress: false
@@ -54,14 +85,14 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: "0"
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: "0"
 
-      - name: Setup test
-        uses: ./.github/actions/setup-test
-        timeout-minutes: 60
+      # - name: Setup test
+      #   uses: ./.github/actions/setup-test
+      #   timeout-minutes: 60
 
       - name: Verify Just Installation
         shell: bash
