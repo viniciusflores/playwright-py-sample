@@ -48,11 +48,11 @@ jobs:
       - name: Setup test
         uses: ./.github/actions/setup-test
 
-      - name: Sync Dependencies
-        timeout-minutes: 60
-        run: |
-          just sync
-          just setup
+      # - name: Sync Dependencies
+      #   timeout-minutes: 60
+      #   run: |
+      #     just sync
+      #     just setup
 
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
