@@ -47,6 +47,7 @@ jobs:
 
       - name: Setup test
         uses: ./.github/actions/setup-test
+        timeout-minutes: 60
 
       # - name: Sync Dependencies
       #   timeout-minutes: 60

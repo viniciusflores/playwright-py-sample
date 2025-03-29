@@ -34,7 +34,7 @@ runs:
       run: uv --version
 
     - name: Sync Dependencies
-      timeout-minutes: 60
+      shell: bash
       run: |
           just sync
           just setup
