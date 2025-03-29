@@ -5,11 +5,6 @@ author: viniciusflores
 runs:
   using: "composite"
   steps:
-    # - name: Checkout Repository
-    #   uses: actions/checkout@v3
-    #   with:
-    #     fetch-depth: "0"
-
     - name: Cache Playwright Dependencies
       uses: actions/cache@v3
       id: playwright-cache
