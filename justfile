@@ -17,10 +17,10 @@ test-prod:
   export ENV=prod; uv run pytest
 
 test-ci-dev:
-  export ENV=dev; uv run pytest --tracing=retain-on-failure --output=test-results/dev/
+  export ENV=dev; uv run pytest -n auto --tracing=retain-on-failure --output=test-results/dev/
 
 test-ci-prod:
-  export ENV=prod; uv run pytest --tracing=retain-on-failure --output=test-results/prod/
+  export ENV=prod; uv run pytest -n auto --tracing=retain-on-failure --output=test-results/prod/
 
 codegen-dev:
   export ENV=dev; uv run playwright codegen https://duckduckgo.com/
