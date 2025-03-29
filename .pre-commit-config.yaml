@@ -1,0 +1,44 @@
+default_install_hook_types:
+  - pre-commit
+  - post-checkout
+  - post-merge
+  - post-rewrite
+default_stages:
+  - pre-commit
+  - post-checkout
+  - post-merge
+  - post-rewrite
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.5.24
+    hooks:
+      - id: uv-lock
+        always_run: true
+      - id: uv-sync
+        always_run: true
+        args: ["--locked", "--all-packages"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.9.3
+    hooks:
+      # Run the linter.
+      - id: ruff
+        stages: [ pre-commit ]
+        types_or: [ python, pyi ]
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        stages: [ pre-commit ]
+        types_or: [ python, pyi ]
+  # - repo: local
+    # hooks:
+    # - id: unit-tests
+    #   name: unit-tests
+    #   # stages: [commit]
+    #   # hook stages: [pre-push]
+    #   entry: bash -c 'uv run -m pytest -n 8 -s -v'
+    #   language: system
+    #   pass_filenames: false
+    #   verbose: true
+
