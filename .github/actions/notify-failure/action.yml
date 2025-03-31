@@ -1,0 +1,30 @@
+name: Notify Playwright Failure
+description: Add a failure notification to the PR summary.
+author: viniciusflores
+inputs:
+  title:
+    description: The title of the failure notification.
+    required: false
+    default: "❌ Some tests failed ❌"
+  message_1:
+    description: The first message to display in the summary.
+    required: false
+    default: "For more details, download the artifact, extract the content, and upload the file trace.zip to https://trace.playwright.dev/, this allows for online debugging."
+  message_2:
+    description: The second message to display in the summary.
+    required: false
+    default: "However, it is also possible to check locally in the project directory using the next command: just show-trace {{path-of-trace.zip}}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add Failure Notification
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const message_01 = "${{ inputs.message_1 }}";
+          const message_02 = "${{ inputs.message_2 }}";
+          core.summary.addHeading("${{ inputs.title }}")
+                        .addRaw(message_01)
+                        .addRaw(message_02)
+                        .write();

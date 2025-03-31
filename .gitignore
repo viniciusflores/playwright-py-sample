@@ -14,3 +14,6 @@ wheels/
 
 # Playwright-generated files
 test-results
+
+# Ruff
+# .ruff_cache
