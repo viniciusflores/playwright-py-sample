@@ -29,14 +29,6 @@ jobs:
         uses: ./.github/actions/setup-test
         timeout-minutes: 60
 
-      - name: Verify Just Installation
-        shell: bash
-        run: just --version
-
-      - name: Verify UV Installation
-        shell: bash
-        run: uv --version
-
       - name: Run Smoke Tests on dev
         run: just test-ci-dev
 
@@ -62,14 +54,6 @@ jobs:
       - name: Setup test
         uses: ./.github/actions/setup-test
         timeout-minutes: 60
-
-      - name: Verify Just Installation
-        shell: bash
-        run: just --version
-
-      - name: Verify UV Installation
-        shell: bash
-        run: uv --version
 
       - name: Run Smoke Tests on prod
         run: just test-ci-prod
