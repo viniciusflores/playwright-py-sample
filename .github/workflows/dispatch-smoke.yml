@@ -1,8 +1,7 @@
 name: Run Smoke Tests on Dispatch
 
 on:
-  repository_dispatch:
-    types: [trigger-smoke-tests]
+  workflow_dispatch:
 
 concurrency:
   group: smoke-tests-pipeline-${{ github.ref }}
