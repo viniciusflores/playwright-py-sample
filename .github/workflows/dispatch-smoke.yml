@@ -1,0 +1,63 @@
+name: Run Smoke Tests on Dispatch
+
+on:
+  repository_dispatch:
+    types: [trigger-smoke-tests]
+
+concurrency:
+  group: smoke-tests-pipeline-${{ github.ref }}
+  cancel-in-progress: false
+
+
+jobs:
+  # This step runs the smoke tests on the dev environment
+  run-smoke-tests-on-dev:
+    concurrency:
+      group: smoke-tests
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Setup test
+        uses: ./.github/actions/setup-test
+        timeout-minutes: 60
+
+      - name: Run Smoke Tests on dev
+        run: just test-ci-dev
+
+      - name: Notify Failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+
+
+  # # This step performs the same actions as the previous one but on the production environment
+  run-smoke-tests-on-production:
+    concurrency:
+      group: smoke-tests
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Setup test
+        uses: ./.github/actions/setup-test
+        timeout-minutes: 60
+
+      - name: Run Smoke Tests on prod
+        run: just test-ci-prod
+
+      - name: Notify Failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+
